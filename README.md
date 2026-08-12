@@ -2,7 +2,6 @@
 
 ![Vibe Coded](https://img.shields.io/badge/vibe-coded-ff5fa8?style=for-the-badge)
 ![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-8a5cf6?style=for-the-badge)
-![Authorised Use Only](https://img.shields.io/badge/authorised%20use-only-d93025?style=for-the-badge)
 ![Benign Payload](https://img.shields.io/badge/payload-benign-2ea44f?style=for-the-badge)
 ![Self Verifying](https://img.shields.io/badge/execution-self%20verifying-3b82f6?style=for-the-badge)
 

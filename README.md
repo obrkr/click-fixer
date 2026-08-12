@@ -10,7 +10,7 @@ A self-hosted **ClickFix / fake-CAPTCHA** simulator for security awareness train
 
 > **This project is fully vibe coded.** The lures, the funnel maths, the payload construction and the self-test were all built through conversational, AI-assisted development rather than a planned build. It has been verified with real automated runs — the payload is actually executed through `CreateProcess` the way the Run dialog invokes it, and a four-recipient campaign is simulated end to end — but read the code yourself before pointing it at real colleagues. Tooling that emails your staff a convincing phishing page deserves that much.
 
-> **Authorised internal training only.** This is not a red-team tool and deliberately makes a poor one: no payload delivery, no evasion, no persistence, and it watermarks itself in the page source and HTTP headers of every lure it serves. Do not point it at anyone your organisation is not authorised to test.
+> **Built with Python 3, Flask and SQLite.** Flask is the only dependency — SQLite comes from the standard library, the pages are Jinja2 templates, and the lure controller is one vanilla JavaScript file. Callback signing uses stdlib `hmac`/`hashlib`. No build step, no bundler, no frontend framework and no CDN: a training page that fails to load is a wasted send.
 
 ---
 

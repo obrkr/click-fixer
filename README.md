@@ -2,7 +2,6 @@
 
 ![Vibe Coded](https://img.shields.io/badge/vibe-coded-ff5fa8?style=for-the-badge)
 ![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-8a5cf6?style=for-the-badge)
-![Benign Payload](https://img.shields.io/badge/payload-benign-2ea44f?style=for-the-badge)
 ![Self Verifying](https://img.shields.io/badge/execution-self%20verifying-3b82f6?style=for-the-badge)
 
 A self-hosted **ClickFix / fake-CAPTCHA** simulator for security awareness training. It reproduces the lure faithfully — the fake check, the fake failure, the clipboard hijack, the "just press Win+R and paste" instructions — and then replaces the malware with a Hello World banner and a debrief page. The payload calls home, so every execution records itself against the right person. No endpoint investigation, no self-reported numbers.

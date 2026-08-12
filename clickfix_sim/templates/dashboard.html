@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Results — {{ cfg.campaign_name }}{% endblock %}
+{% block shellclass %}wide{% endblock %}
+
+{% block body %}
+<header class="top">
+  <p class="eyebrow">Campaign results</p>
+  <h1>{{ cfg.campaign_name }}</h1>
+  <p>{{ summary.total_sessions }} session{{ '' if summary.total_sessions == 1 else 's' }} recorded.</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="n">{{ summary.total_sessions }}</div><div class="k">Sessions</div></div>
+  <div class="stat bad"><div class="n">{{ summary.compromise_rate }}%</div><div class="k">Ran the command</div></div>
+  <div class="stat bad"><div class="n">{{ summary.confirmed_rate }}%</div><div class="k">Confirmed by callback</div></div>
+  <div class="stat good"><div class="n">{{ summary.report_rate }}%</div><div class="k">Reported it</div></div>
+  <div class="stat">
+    <div class="n">{{ summary.median_seconds_to_copy if summary.median_seconds_to_copy is not none else '—' }}<span style="font-size:15px">s</span></div>
+    <div class="k">Median time to copy</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Funnel</h2>
+  <ul class="funnel">
+    {% for step in summary.funnel %}
+      <li class="{{ 'critical' if step.stage in ('focus_lost', 'ran_command') else '' }}">
+        <div class="row"><span>{{ step.label }}</span><span class="muted">{{ step.count }} &middot; {{ step.pct }}%</span></div>
+        <div class="track"><div class="fill" style="width: {{ step.pct }}%"></div></div>
+      </li>
+    {% endfor %}
+  </ul>
+  <p class="small muted" style="margin:14px 0 0">
+    <strong>Left browser</strong> means focus moved away after the payload was copied &mdash;
+    the strongest signal short of the command calling home that a run box was actually opened.
+    <strong>Ran the command</strong> is self-reported unless payload mode is <code>debrief</code>,
+    in which case it is confirmed by the command itself.
+  </p>
+</div>
+
+<div class="card">
+  <h2>Strength of evidence</h2>
+  <ul>
+    {% for row in summary.evidence_mix %}
+      <li><strong>{{ row.count }}</strong> &mdash; {{ row.label }}</li>
+    {% endfor %}
+  </ul>
+  <p class="small muted" style="margin-bottom:0">A browser cannot see the Run dialog. Only the
+  callback from the payload itself proves execution; "left the browser" is circumstantial and
+  self-reports are just a button click. Treat the confirmed number as the real one &mdash; and as
+  a floor, since someone who pasted but never pressed Enter leaves no trace anywhere.</p>
+</div>
+
+{% if summary.by_scenario %}
+<div class="card">
+  <h2>By scenario</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Scenario</th><th>Sessions</th><th>Ran command</th><th>Reported</th></tr></thead>
+      <tbody>
+        {% for row in summary.by_scenario %}
+          <tr>
+            <td>{{ scenarios[row.scenario].name if row.scenario in scenarios else row.scenario }}</td>
+            <td>{{ row.sessions }}</td>
+            <td><span class="pill {{ 'bad' if row.compromise_rate else 'good' }}">{{ row.compromise_rate }}%</span></td>
+            <td><span class="pill {{ 'good' if row.report_rate else 'mid' }}">{{ row.report_rate }}%</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Sessions</h2>
+  {% if sessions %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>First seen (UTC)</th><th>Recipient</th><th>Scenario</th><th>OS</th>
+            <th>Furthest step</th><th>Outcome</th><th>Evidence</th><th>Away</th><th>To copy</th><th>Session</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+            <tr>
+              <td class="mono">{{ s.first_seen.replace('T', ' ')[:19] }}</td>
+              <td>{{ s.recipient or '—' }}</td>
+              <td>{{ scenarios[s.scenario].name if s.scenario in scenarios else (s.scenario or '—') }}</td>
+              <td>{{ s.platform or '—' }}</td>
+              <td>{{ stage_labels.get(s.furthest, s.furthest) }}</td>
+              <td>
+                {% if s.reported %}<span class="pill good">Reported</span>
+                {% elif s.compromised %}<span class="pill bad">Compromised</span>
+                {% else %}<span class="pill mid">Disengaged</span>{% endif %}
+              </td>
+              <td>
+                {% if s.evidence == 'confirmed' %}<span class="pill bad">Confirmed</span>
+                {% elif s.evidence == 'unverified_callback' %}<span class="pill mid">Callback (unsigned)</span>
+                {% elif s.evidence == 'self_reported' %}<span class="pill mid">Self-reported</span>
+                {% elif s.evidence == 'inferred' %}<span class="pill mid">Inferred</span>
+                {% else %}<span class="muted">—</span>{% endif %}
+              </td>
+              <td>{{ ((s.away_ms // 1000) ~ 's') if s.away_ms is not none else '—' }}</td>
+              <td>{{ (s.seconds_to_copy ~ 's') if s.seconds_to_copy is not none else '—' }}</td>
+              <td class="mono">{{ s.session_id[:8] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted" style="margin-bottom:0">No sessions yet. Send someone a scenario link from the console.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Data</h2>
+  <p><a class="btn" href="{{ url_for('export_csv') }}">Download CSV</a></p>
+  <form method="post" action="{{ url_for('admin_reset') }}"
+        onsubmit="return confirm('Delete all recorded events? This cannot be undone.')">
+    <button class="btn" type="submit">Clear all results</button>
+  </form>
+  <p class="small muted" style="margin:12px 0 0">Use aggregate numbers when you brief
+  people. Naming individuals who fell for a well-built lure suppresses reporting, which
+  costs you more than the click did.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "lures/_base.html" %}
+{% block title %}Just a moment&hellip;{% endblock %}
+
+{% block content %}
+<div class="cf-card">
+  <p class="cf-brandline"><span class="dot"></span> Connection security check</p>
+  <h1 class="cf-title">{{ scenario.headline }}</h1>
+  <p class="cf-sub">{{ scenario.subhead }}</p>
+
+  {% include "partials/verify.html" %}
+</div>
+{% endblock %}

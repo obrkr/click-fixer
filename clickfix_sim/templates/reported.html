@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Good catch{% endblock %}
+
+{% block body %}
+<div class="banner good">
+  <h2>Good catch &mdash; that is exactly right</h2>
+  <p style="margin-bottom:0">That page was a simulated <strong>ClickFix</strong> attack, run by
+  {{ cfg.operator }} as part of {{ cfg.campaign_name }}. You spotted it and reported it
+  instead of following the instructions. That is the behaviour that actually protects
+  the organisation.</p>
+</div>
+
+<header class="top">
+  <p class="eyebrow">Debrief</p>
+  <h1>What you avoided</h1>
+</header>
+
+<div class="card">
+  <h2>The trick</h2>
+  <p>ClickFix pages claim something has failed &mdash; a bot check, a document, a
+  microphone, a browser update &mdash; then offer a "manual fix": press Win+R (or open
+  Terminal), paste, press Enter. The page has already put an attacker's command in your
+  clipboard.</p>
+  <p>It works because the web page cannot run code on your machine, so it persuades you
+  to run it on its behalf. Nothing is downloaded, so nothing is scanned or blocked, and
+  every permission prompt is satisfied because you gave the permission yourself.</p>
+  <p style="margin-bottom:0">In a real campaign, pressing Enter typically installs an
+  infostealer that takes saved passwords and session cookies &mdash; and session cookies
+  get past multi-factor authentication.</p>
+</div>
+
+<div class="card">
+  <h2>Keep doing this</h2>
+  <ul>
+    <li>No legitimate verification, update or repair ever asks you to paste a command into Run, PowerShell or Terminal.</li>
+    <li>If something puts text in your clipboard that you did not copy, close the page.</li>
+    <li>Report it &mdash; even when you did not fall for it. Early reports are how the rest of the organisation gets warned.</li>
+  </ul>
+  <p style="margin-bottom:0">Reports go to
+  <a href="mailto:{{ cfg.security_contact }}">{{ cfg.security_contact }}</a>.</p>
+</div>
+
+<div class="card">
+  <h2>Worth knowing</h2>
+  <p style="margin-bottom:0">If a colleague tells you they already pressed Enter on one of
+  these: disconnect the device from the network, leave it powered on, and contact
+  {{ cfg.operator }} straight away. Speed matters much more than embarrassment &mdash;
+  sessions can be revoked before they are used.</p>
+</div>
+{% endblock %}

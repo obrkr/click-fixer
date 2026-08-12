@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Operator console — {{ cfg.campaign_name }}{% endblock %}
+
+{% block body %}
+<header class="top">
+  <p class="eyebrow">ClickFix awareness simulator</p>
+  <h1>{{ cfg.campaign_name }}</h1>
+  <p>Operator console. Trainees should never see this page — send them a scenario link.</p>
+</header>
+
+<div class="banner warn">
+  <h2>Before you send anything</h2>
+  <p>Run this only against people your organisation is authorised to test, with
+  management sign-off, and tell your service desk it is happening — ClickFix
+  simulations generate genuine security reports, which is the point.</p>
+  <p class="small" style="margin-bottom:0">Base URL: <code>{{ cfg.base_url }}</code>
+  &middot; Windows payload: <strong>{{ payload_length }}/{{ run_dialog_max }}</strong> characters</p>
+</div>
+
+{% if not payload_fits %}
+<div class="banner danger">
+  <h2>The Windows payload will be truncated</h2>
+  <p>It is <strong>{{ payload_length }}</strong> characters and the Run dialog accepts
+  <strong>{{ run_dialog_max }}</strong>. Windows cuts the rest off silently, so trainees would
+  paste a command that errors &mdash; and the decoy tail, which is the point of the exercise,
+  never arrives at all.</p>
+  <p style="margin-bottom:0">Shorten <code>--base-url</code> &mdash; a short hostname is the usual
+  fix, and the URL is the most expensive part of the payload.</p>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Scenarios</h2>
+  <p class="small muted">Append <code>?t=alice@example.com</code> to any link to tag the recipient in the results.</p>
+  <div class="grid">
+    {% for s in scenarios %}
+      <div class="card scenario" style="margin:0">
+        <h3>{{ s.name }}</h3>
+        <p>{{ s.summary }}</p>
+        <p class="small muted"><strong>In the wild:</strong> {{ s.real_world }}</p>
+        <div class="links">
+          <a class="btn primary" href="{{ url_for('lure', scenario_id=s.id) }}">Open lure</a>
+          <a class="btn" href="{{ url_for('caught', s=s.id) }}">Preview debrief</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <h2>Results</h2>
+  <p>The dashboard is protected by a token generated at startup.</p>
+  <p><a class="btn primary" href="{{ url_for('admin', token=admin_token) }}">Open dashboard</a></p>
+  <p class="small muted" style="margin-bottom:0">Token: <code>{{ admin_token }}</code></p>
+</div>
+
+<div class="card">
+  <h2>What gets recorded</h2>
+  <ul class="small">
+    <li>A random session id in a cookie, plus whatever recipient tag you put in the link.</li>
+    <li>Which stage of the lure each session reached, and how long it took.</li>
+    <li>Whether they reported the page instead of following it.</li>
+  </ul>
+  <p class="small muted" style="margin-bottom:0">No passwords, no keystrokes, no form data. There is nowhere in this
+  codebase that collects them.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{# ClickFix verification widget — TRAINING SIMULATION.
+   Shared by every lure so all scenarios exercise the identical mechanic. #}
+<div id="cfOverlay"
+     data-scenario="{{ scenario.id }}"
+     data-platform="{{ platform }}"
+     data-spinner="{{ cfg.spinner_ms }}"
+     data-recipient="{{ recipient }}"
+     data-current="idle">
+
+  {# ---- 1. the bait ---------------------------------------------------- #}
+  <div data-state="idle">
+    {% if scenario.widget == 'checkbox' %}
+      <div class="cf-widget" id="cfTrigger" role="button" tabindex="0">
+        <span class="cf-box"></span>
+        <span class="cf-widget-label">{{ scenario.trigger_label }}</span>
+        <span class="cf-widget-mark">Security<br>check</span>
+      </div>
+    {% else %}
+      <button class="cf-btn wide" id="cfTrigger" type="button">{{ scenario.trigger_label }}</button>
+    {% endif %}
+  </div>
+
+  {# ---- 2. the theatre -------------------------------------------------- #}
+  <div data-state="checking" hidden>
+    <div class="cf-checking">
+      <span class="cf-spinner"></span>
+      <span>Checking your device&hellip;</span>
+    </div>
+  </div>
+
+  {# ---- 3. the ask ------------------------------------------------------ #}
+  <div data-state="steps" hidden>
+    <div class="cf-fail">
+      <strong>{{ scenario.failure_title }}</strong>
+      <span>{{ scenario.failure_body }}</span>
+    </div>
+
+    <ol class="cf-steps">
+      {% for step in steps %}
+        <li>
+          <span class="cf-num"></span>
+          <span class="cf-keys">{{ step.key }}</span>
+          <span class="cf-steptext">{{ step.text }}</span>
+        </li>
+      {% endfor %}
+    </ol>
+
+    <p class="cf-note" id="cfCopyNote">Verification token copied to clipboard.</p>
+
+    <div class="cf-fallback" id="cfFallback" hidden>{{ payload }}</div>
+
+    <div class="cf-welcome-back" id="cfWelcomeBack" hidden>
+      Verification is still pending. Confirm once you have pressed
+      {{ 'Enter' if platform == 'windows' else 'Return' }}.
+    </div>
+
+    <div class="cf-actions">
+      <button class="cf-btn" id="cfDone" type="button">I have completed the steps</button>
+      <button class="cf-btn ghost" id="cfRecopy" type="button">Copy token again</button>
+    </div>
+  </div>
+
+  <div class="cf-footer">
+    <span>Ref: {{ session_id[:8] }}</span>
+    {# Real attacks have no such link. It is here because report rate is the
+       metric that predicts how fast you hear about a real one. #}
+    <a href="#" id="cfReport">This page looks wrong — report it</a>
+  </div>
+</div>
+
+<textarea id="cfPayload" readonly aria-hidden="true" tabindex="-1">{{ payload }}</textarea>

@@ -1,0 +1,23 @@
+{% extends "lures/_base.html" %}
+{% block title %}Q3_Budget_Review.pdf{% endblock %}
+
+{% block content %}
+<div class="doc-shell">
+  <div class="doc-bar">
+    <span class="doc-name">Q3_Budget_Review.pdf</span>
+    <span class="doc-meta">Shared with you &middot; 2 pages</span>
+  </div>
+  <div class="doc-body">
+    <div class="doc-skeleton" aria-hidden="true">
+      <p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
+    </div>
+  </div>
+</div>
+
+<div class="cf-card" style="margin-top:22px">
+  <h1 class="cf-title">{{ scenario.headline }}</h1>
+  <p class="cf-sub">{{ scenario.subhead }}</p>
+
+  {% include "partials/verify.html" %}
+</div>
+{% endblock %}

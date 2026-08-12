@@ -1,0 +1,14 @@
+# Campaign results — never commit these. They contain recipient tags, which
+# means real names and email addresses from whoever you last tested.
+data/
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Local config
+.env

@@ -1,0 +1,15 @@
+{% extends "lures/_base.html" %}
+{% block title %}Critical update required{% endblock %}
+{% block bodyclass %}update{% endblock %}
+
+{% block content %}
+<div class="update-shell">
+  <div class="cf-card">
+    <p class="cf-brandline"><span class="dot" style="background:#d93025"></span> Security update</p>
+    <h1 class="cf-title">{{ scenario.headline }}</h1>
+    <p class="cf-sub">{{ scenario.subhead }}</p>
+
+    {% include "partials/verify.html" %}
+  </div>
+</div>
+{% endblock %}

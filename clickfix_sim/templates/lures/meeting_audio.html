@@ -1,0 +1,19 @@
+{% extends "lures/_base.html" %}
+{% block title %}Joining meeting&hellip;{% endblock %}
+{% block bodyclass %}meet{% endblock %}
+
+{% block content %}
+<div class="meet-stage">
+  <div class="meet-tiles" aria-hidden="true">
+    <div class="meet-tile">&#9679;&#9679;&#9679;</div>
+    <div class="meet-tile">&#9679;&#9679;&#9679;</div>
+    <div class="meet-tile">&#9679;&#9679;&#9679;</div>
+  </div>
+  <h1 class="meet-title">{{ scenario.headline }}</h1>
+  <p class="meet-sub">{{ scenario.subhead }} Other participants are already in the call.</p>
+</div>
+
+<div class="cf-card" style="margin-top:22px">
+  {% include "partials/verify.html" %}
+</div>
+{% endblock %}

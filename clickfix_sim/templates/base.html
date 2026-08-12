@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{% block title %}{{ cfg.campaign_name }}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body>
+<div class="shell {% block shellclass %}{% endblock %}">
+  {% block body %}{% endblock %}
+  <footer class="foot">
+    {{ cfg.campaign_name }} &middot; run by {{ cfg.operator }} &middot;
+    questions: <a href="mailto:{{ cfg.security_contact }}">{{ cfg.security_contact }}</a><br>
+    Security awareness training simulation. No malware, no credential capture.
+  </footer>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>
